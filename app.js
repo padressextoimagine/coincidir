@@ -247,7 +247,8 @@
     let drag = null;
 
     function renderCal() {
-      const title = new Intl.DateTimeFormat(lang, { month: "long", year: "numeric" }).format(new Date(viewY, viewM, 1));
+      const raw = new Intl.DateTimeFormat(lang, { month: "long", year: "numeric" }).format(new Date(viewY, viewM, 1));
+      const title = raw.charAt(0).toUpperCase() + raw.slice(1);
       $("cal-title").textContent = title;
       const g = $("cal-grid");
       g.innerHTML = "";
