@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Coincidir</title>
+  <meta name="description" content="Encuentren el mejor horario para reunirse: cada persona marca cuándo puede y la app muestra las coincidencias.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📅</text></svg>">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./">📅 <span>Coincidir</span></a>
+    <button id="lang-toggle" class="lang-btn" type="button">EN</button>
+  </header>
+
+  <div id="demo-banner" class="banner" hidden data-i18n="demoBanner"></div>
+
+  <main>
+    <!-- ===== Crear evento ===== -->
+    <section id="view-create" hidden>
+      <h1 data-i18n="createTitle"></h1>
+      <p class="muted" data-i18n="createSubtitle"></p>
+
+      <form id="create-form" class="card">
+        <label class="field">
+          <span data-i18n="eventName"></span>
+          <input id="ev-name" type="text" maxlength="80" required data-i18n-ph="eventNamePh">
+        </label>
+
+        <div class="field">
+          <span data-i18n="pickDates"></span>
+          <div class="calendar">
+            <div class="cal-head">
+              <button type="button" id="cal-prev" class="icon-btn" aria-label="‹">‹</button>
+              <strong id="cal-title"></strong>
+              <button type="button" id="cal-next" class="icon-btn" aria-label="›">›</button>
+            </div>
+            <div id="cal-grid" class="cal-grid"></div>
+            <div class="cal-foot">
+              <small id="cal-count" class="muted"></small>
+              <button type="button" id="cal-clear" class="link-btn" data-i18n="clear"></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <label class="field">
+            <span data-i18n="from"></span>
+            <select id="ev-start"></select>
+          </label>
+          <label class="field">
+            <span data-i18n="to"></span>
+            <select id="ev-end"></select>
+          </label>
+          <label class="field">
+            <span data-i18n="slotSize"></span>
+            <select id="ev-slot">
+              <option value="15">15 min</option>
+              <option value="30" selected>30 min</option>
+              <option value="60">60 min</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="field">
+          <span data-i18n="timezone"></span>
+          <select id="ev-tz"></select>
+        </label>
+
+        <p id="create-error" class="error" hidden></p>
+        <button type="submit" class="primary" data-i18n="createBtn"></button>
+      </form>
+    </section>
+
+    <!-- ===== Evento ===== -->
+    <section id="view-event" hidden>
+      <h1 id="ev-title"></h1>
+
+      <div class="card share">
+        <span data-i18n="shareLink"></span>
+        <div class="share-row">
+          <input id="share-url" type="text" readonly>
+          <button id="copy-btn" type="button" data-i18n="copy"></button>
+          <a id="wa-btn" class="btn wa" target="_blank" rel="noopener">WhatsApp</a>
+        </div>
+      </div>
+
+      <div class="card identity">
+        <form id="name-form" class="name-row">
+          <label class="field grow">
+            <span data-i18n="yourName"></span>
+            <input id="my-name" type="text" maxlength="40" required data-i18n-ph="yourNamePh">
+          </label>
+          <button type="submit" class="primary" data-i18n="start"></button>
+        </form>
+        <small class="muted" data-i18n="nameHint"></small>
+        <div class="tz-row">
+          <label>
+            <span data-i18n="viewTz"></span>
+            <select id="view-tz"></select>
+          </label>
+        </div>
+      </div>
+
+      <div class="grids">
+        <div class="panel">
+          <div class="panel-head">
+            <h2 data-i18n="myAvail"></h2>
+            <span id="save-status" class="muted small"></span>
+          </div>
+          <p class="muted small" data-i18n="paintHint"></p>
+          <div class="legend"><span class="sw sw-yes"></span><span data-i18n="legendYes"></span><span class="sw sw-no"></span><span data-i18n="legendNo"></span></div>
+          <div class="grid-wrap">
+            <div id="my-grid" class="tgrid mine"></div>
+            <div id="my-overlay" class="overlay" data-i18n="enterNameFirst"></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2 data-i18n="groupAvail"></h2>
+            <span id="resp-count" class="muted small"></span>
+          </div>
+          <p class="muted small" data-i18n="groupHint"></p>
+          <div class="legend"><span id="heat-min">0/0</span><span class="heatbar"></span><span id="heat-max">0/0</span></div>
+          <div class="grid-wrap">
+            <div id="group-grid" class="tgrid group"></div>
+          </div>
+          <div id="cell-info" class="cell-info" hidden></div>
+        </div>
+      </div>
+
+      <div class="card best">
+        <div class="panel-head">
+          <h2 data-i18n="bestTitle"></h2>
+          <label class="small">
+            <span data-i18n="duration"></span>
+            <select id="dur-select"></select>
+          </label>
+        </div>
+        <ol id="best-list"></ol>
+        <p id="best-empty" class="muted" data-i18n="bestEmpty" hidden></p>
+      </div>
+
+      <div class="card">
+        <h2 data-i18n="participants"></h2>
+        <div id="people" class="people"></div>
+      </div>
+    </section>
+
+    <section id="view-error" hidden>
+      <h1 data-i18n="notFound"></h1>
+      <p><a href="./" data-i18n="createNew"></a></p>
+    </section>
+  </main>
+
+  <footer class="foot muted small">Coincidir · <a href="./" data-i18n="newEvent"></a></footer>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
