@@ -1,3 +1,4 @@
+[hidden] { display: none !important; }
 :root {
   /* Paleta Imagine */
   --orange: #FAA972;
@@ -75,7 +76,7 @@ button.primary:hover { filter: brightness(1.06); }
 /* Evento */
 .share-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
 .share-row input { flex: 1; min-width: 200px; }
-.name-row { display: flex; gap: 10px; align-items: flex-end; }
+.name-row { display: flex; gap: 10px; align-items: stretch; margin: 6px 0; }
 .tz-row { margin-top: 12px; font-size: .9rem; }
 .tz-row select { margin-left: 6px; max-width: 260px; }
 
@@ -122,3 +123,22 @@ button.primary:hover { filter: brightness(1.06); }
 .chip.dim { opacity: .45; }
 
 .foot { text-align: center; padding: 20px; }
+
+/* Pasos */
+.step-head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.step-head .push { margin-left: auto; }
+.step-num { flex: none; width: 34px; height: 34px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.05rem; background: #EDE4DB; color: var(--muted); }
+.step.current { border: 2px solid var(--orange); box-shadow: 0 0 0 5px rgba(250,169,114,.18); }
+.step.current .step-num { background: var(--orange-dark); color: #fff; }
+.step.done .step-num { background: var(--yes); color: #fff; font-size: 0; }
+.step.done .step-num::after { content: "✓"; font-size: 1.1rem; }
+.step.locked > :not(.grid-wrap):not(.step-head) { opacity: .5; }
+.step.locked .step-head h2 { opacity: .5; }
+#step3 .step-num { background: var(--blue); color: #fff; }
+.name-row input { flex: 1; font-size: 1.05rem; padding: 11px 12px; }
+.me-done { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; font-size: 1.02rem; }
+.me-done .ok-text { color: #2f7a4a; font-weight: 700; }
+.save-status { font-weight: 700; color: #2f7a4a; }
+.autosave { margin: 8px 0 0; }
+.overlay { flex-direction: column; gap: 6px; font-size: 1rem; color: var(--text); }
+.tz-row { margin: 12px 2px 0; }

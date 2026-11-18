@@ -29,15 +29,20 @@
       waText: (name, url) => `Marca cuándo puedes para "${name}": ${url}`,
       yourName: "Tu nombre",
       yourNamePh: "Ej.: Ana",
-      start: "Marcar mi disponibilidad",
-      change: "Cambiar",
-      nameHint: "Si ya respondiste, escribe el mismo nombre para editar tus respuestas.",
+      step1Title: "Escribe tu nombre",
+      step1Btn: "Continuar →",
+      nameHint: "Si ya respondiste antes, escribe el mismo nombre para ver y editar tus horarios.",
+      hello: (n) => `Hola, ${n}. Ya puedes marcar tus horarios en el paso 2.`,
+      changeName: "No soy yo / cambiar nombre",
+      step2Title: "Marca los horarios en que puedes",
+      step3Title: "Mira cuándo puede el grupo",
+      autoSave: "Se guarda automáticamente: no hace falta apretar ningún botón.",
       viewTz: "Ver horarios en zona:",
       myAvail: "Tu disponibilidad",
-      paintHint: "Haz clic y arrastra (o desliza con el dedo) sobre los horarios en que PUEDES.",
+      paintHint: "Haz clic y arrastra (o desliza con el dedo) sobre los horarios en que PUEDES. Se ponen en verde.",
       legendYes: "Puedo",
       legendNo: "No puedo",
-      enterNameFirst: "Escribe tu nombre arriba para empezar a marcar.",
+      enterNameFirst: "🔒 Primero completa el paso 1: escribe tu nombre.",
       groupAvail: "Disponibilidad del grupo",
       groupHint: "Más oscuro = más gente puede. Pasa el mouse o toca un horario para ver quién.",
       responses: (n) => n === 1 ? "1 respuesta" : `${n} respuestas`,
@@ -84,15 +89,20 @@
       waText: (name, url) => `Mark when you're free for "${name}": ${url}`,
       yourName: "Your name",
       yourNamePh: "e.g. Ana",
-      start: "Mark my availability",
-      change: "Change",
-      nameHint: "If you already answered, type the same name to edit your answers.",
+      step1Title: "Enter your name",
+      step1Btn: "Continue →",
+      nameHint: "If you answered before, type the same name to see and edit your times.",
+      hello: (n) => `Hi ${n}! You can now mark your times in step 2.`,
+      changeName: "Not me / change name",
+      step2Title: "Mark the times you're available",
+      step3Title: "See when the group can meet",
+      autoSave: "Changes save automatically — no button needed.",
       viewTz: "Show times in:",
       myAvail: "Your availability",
-      paintHint: "Click and drag (or swipe) over the times you CAN make it.",
+      paintHint: "Click and drag (or swipe) over the times you CAN make it. They turn green.",
       legendYes: "Available",
       legendNo: "Unavailable",
-      enterNameFirst: "Enter your name above to start.",
+      enterNameFirst: "🔒 First complete step 1: enter your name.",
       groupAvail: "Group availability",
       groupHint: "Darker = more people available. Hover or tap a slot to see who.",
       responses: (n) => n === 1 ? "1 response" : `${n} responses`,
@@ -627,23 +637,44 @@
     window.addEventListener("beforeunload", () => { if (dirty) save(); });
 
     // ----- Identificarse -----
-    function setMe(name) {
+    function setSteps() {
+      const s1 = $("step1"), s2 = $("step2");
+      s1.classList.toggle("current", !me); s1.classList.toggle("done", !!me);
+      s2.classList.toggle("locked", !me); s2.classList.toggle("current", !!me);
+      $("name-form").hidden = !!me; $("name-hint").hidden = !!me;
+      $("me-done").hidden = !me;
+      $("my-overlay").hidden = !!me;
+      if (me) $("me-hello").textContent = t("hello", me);
+    }
+    function setMe(name, scroll) {
       const clean = name.trim().replace(/\s+/g, " ").slice(0, 40);
       if (!clean) return;
       const existing = responses.find((r) => nameKey(r.name) === nameKey(clean));
       me = existing ? existing.name : clean;
       mySel = new Set(existing ? existing.slots : []);
       $("my-name").value = me;
-      $("my-overlay").hidden = true;
       LS.set("coincidir:me:" + ev.id, me);
       $("save-status").textContent = "";
+      setSteps();
       paintMine();
       paintGroup();
+      if (scroll) $("step2").scrollIntoView({ behavior: "smooth", block: "start" });
     }
     $("name-form").addEventListener("submit", (e) => {
       e.preventDefault();
-      if (dirty) save();
-      setMe($("my-name").value);
+      setMe($("my-name").value, true);
+    });
+    $("change-name").addEventListener("click", async () => {
+      clearTimeout(saveTimer);
+      if (dirty) await save();
+      me = null; mySel = new Set();
+      LS.set("coincidir:me:" + ev.id, null);
+      $("my-name").value = "";
+      $("save-status").textContent = "";
+      setSteps();
+      paintMine();
+      paintGroup();
+      $("my-name").focus();
     });
 
     function renderAll() {
@@ -656,10 +687,11 @@
       paintGroup();
     }
 
-    rerenderEvent = () => { fillDur(); updateWa(); renderAll(); if (me) $("save-status").textContent = ""; };
+    rerenderEvent = () => { fillDur(); updateWa(); renderAll(); setSteps(); if (me) $("save-status").textContent = ""; };
 
     await loadResponses();
     renderAll();
+    setSteps();
     const remembered = LS.get("coincidir:me:" + ev.id, null);
     if (remembered) setMe(remembered);
 

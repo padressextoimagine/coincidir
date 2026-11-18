@@ -90,41 +90,48 @@
         </div>
       </div>
 
-      <div class="card identity">
+      <!-- Paso 1 -->
+      <div id="step1" class="card step current">
+        <div class="step-head">
+          <span class="step-num">1</span>
+          <h2 data-i18n="step1Title"></h2>
+        </div>
         <form id="name-form" class="name-row">
-          <label class="field grow">
-            <span data-i18n="yourName"></span>
-            <input id="my-name" type="text" maxlength="40" required data-i18n-ph="yourNamePh">
-          </label>
-          <button type="submit" class="primary" data-i18n="start"></button>
+          <input id="my-name" type="text" maxlength="40" required autocomplete="name" data-i18n-ph="yourNamePh" aria-label="Nombre">
+          <button type="submit" class="primary" data-i18n="step1Btn"></button>
         </form>
-        <small class="muted" data-i18n="nameHint"></small>
-        <div class="tz-row">
-          <label>
-            <span data-i18n="viewTz"></span>
-            <select id="view-tz"></select>
-          </label>
+        <small id="name-hint" class="muted" data-i18n="nameHint"></small>
+        <div id="me-done" class="me-done" hidden>
+          <span class="ok-text">✓ <span id="me-hello"></span></span>
+          <button type="button" id="change-name" class="link-btn" data-i18n="changeName"></button>
         </div>
       </div>
 
       <div class="grids">
-        <div class="panel">
-          <div class="panel-head">
-            <h2 data-i18n="myAvail"></h2>
-            <span id="save-status" class="muted small"></span>
+        <!-- Paso 2 -->
+        <div id="step2" class="panel step locked">
+          <div class="step-head">
+            <span class="step-num">2</span>
+            <h2 data-i18n="step2Title"></h2>
           </div>
-          <p class="muted small" data-i18n="paintHint"></p>
-          <div class="legend"><span class="sw sw-yes"></span><span data-i18n="legendYes"></span><span class="sw sw-no"></span><span data-i18n="legendNo"></span></div>
+          <p class="small" data-i18n="paintHint"></p>
+          <div class="panel-head">
+            <div class="legend"><span class="sw sw-yes"></span><span data-i18n="legendYes"></span><span class="sw sw-no"></span><span data-i18n="legendNo"></span></div>
+            <span id="save-status" class="save-status small"></span>
+          </div>
           <div class="grid-wrap">
             <div id="my-grid" class="tgrid mine"></div>
             <div id="my-overlay" class="overlay" data-i18n="enterNameFirst"></div>
           </div>
+          <p class="muted small autosave" data-i18n="autoSave"></p>
         </div>
 
-        <div class="panel">
-          <div class="panel-head">
-            <h2 data-i18n="groupAvail"></h2>
-            <span id="resp-count" class="muted small"></span>
+        <!-- Paso 3 -->
+        <div id="step3" class="panel step">
+          <div class="step-head">
+            <span class="step-num">3</span>
+            <h2 data-i18n="step3Title"></h2>
+            <span id="resp-count" class="muted small push"></span>
           </div>
           <p class="muted small" data-i18n="groupHint"></p>
           <div class="legend"><span id="heat-min">0/0</span><span class="heatbar"></span><span id="heat-max">0/0</span></div>
@@ -133,6 +140,13 @@
           </div>
           <div id="cell-info" class="cell-info" hidden></div>
         </div>
+      </div>
+
+      <div class="tz-row small">
+        <label>
+          <span data-i18n="viewTz"></span>
+          <select id="view-tz"></select>
+        </label>
       </div>
 
       <div class="card best">
